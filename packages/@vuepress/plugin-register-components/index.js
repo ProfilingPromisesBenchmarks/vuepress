@@ -37,13 +37,24 @@ module.exports = (options, context) => ({
     let code = ''
 
     // 1. Register components in specified directories
-    for (const baseDir of baseDirs) {
-      if (!isString(baseDir)) {
-        continue
-      }
-      const files = await resolveComponents(baseDir) || []
-      code += files.map(file => genImport(baseDir, file)).join('\n') + '\n'
-    }
+    // DR-ASYNC REFACTOR AWAIT-IN-LOOP
+    // console.log("*** EXECUTING /packages/@vuepress/plugin-register-components/index.js:40:46");
+    // for (const baseDir of baseDirs) {
+    //   if (!isString(baseDir)) {
+    //     continue
+    //   }
+    //   const files = await resolveComponents(baseDir) || []
+    //   code += files.map(file => genImport(baseDir, file)).join('\n') + '\n'
+    // }
+
+    const stringBaseDirs = baseDirs.filter(isString)
+    const results = await Promise.all(
+      stringBaseDirs.map((baseDir) => resolveComponents(baseDir))
+    )
+    results.forEach((files, index) => {
+      const baseDir = stringBaseDirs[index]
+      code += (files || []).map(file => genImport(baseDir, file)).join('\n') + '\n'
+    })
 
     // 2. Register named components.
     code += components.map(({ name, path: absolutePath }) => importCode(name, absolutePath))
