@@ -11,6 +11,7 @@ module.exports = createJestConfig({
     '^@internal/(.*)$': '<rootDir>/.temp/internal/$1',
     '^@transform/(.*)$': '<rootDir>/.temp/transform/$1'
   },
+  setupFiles: ['/home/drasync/ProfilingPromisesAnalysis/asyncHooks_require.js'],
   modulePathIgnorePatterns: [
     '<rootDir>/packages/@vuepress/core/__test__/plugin-api/AsyncOption.spec.js'
   ]
