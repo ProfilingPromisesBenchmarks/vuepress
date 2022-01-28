@@ -25,7 +25,9 @@ class AsyncOption extends Option {
     this.items = []
     this.appliedItems = this.items
 
-    for (const { name, value } of rawItems) {
+    await Promise.all(rawItems.map(async (obj) => {
+      const name = obj.name;
+      const value = obj.value;
       try {
         this.add(
           name,
@@ -37,7 +39,21 @@ class AsyncOption extends Option {
         logger.error(`${chalk.cyan(name)} apply ${chalk.cyan(this.key)} failed.`)
         throw error
       }
-    }
+    }));
+
+    // for (const { name, value } of rawItems) {
+    //   try {
+    //     this.add(
+    //       name,
+    //       isFunction(value)
+    //         ? await value(...args)
+    //         : value
+    //     )
+    //   } catch (error) {
+    //     logger.error(`${chalk.cyan(name)} apply ${chalk.cyan(this.key)} failed.`)
+    //     throw error
+    //   }
+    // }
 
     this.items = rawItems
   }
